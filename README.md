@@ -14,12 +14,15 @@ Add to `flake.nix`:
 ```nix
 {
   inputs = {
+    flake-compat.url = "github:edolstra/flake-compat";
+    flake-compat.flake = false;
     flake-compat-ci.url = "github:hercules-ci/flake-compat-ci";
   };
   outputs = { 
     self,
     # ...
     flake-compat-ci,
+    ...
   }:
   {
     ciNix = flake-compat-ci.lib.recurseIntoFlake self;
@@ -27,7 +30,7 @@ Add to `flake.nix`:
 }
 ```
 
-Add these two boilerplate files:
+Run `nix flake update` and add these two boilerplate files:
 
 `flake-compat.nix`
 ```nix
