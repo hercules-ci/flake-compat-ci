@@ -14,7 +14,7 @@
   {
 
     ciNix = {
-      recurseIntoFlake = flake-compat-ci.lib.recurseIntoFlake self;
+      recurseIntoFlake = flake-compat-ci.lib.recurseIntoFlake {} self;
     };
 
     checks."x86_64-linux".bovine = nixpkgs.legacyPackages."x86_64-linux".cowsay;
