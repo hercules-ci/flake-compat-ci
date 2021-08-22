@@ -25,7 +25,14 @@ Add to `flake.nix`:
     ...
   }:
   {
-    ciNix = flake-compat-ci.lib.recurseIntoFlake self;
+    ciNix = flake-compat-ci.lib.recurseIntoFlakeWith {
+      flake = self;
+
+      # Optional. Systems for which to perform CI.
+      # By default, every system attr in the flake will be built.
+      # Example: [ "x86_64-darwin" "aarch64-linux" ];
+      systems = [ "x86_64-linux" ];
+    };
   };
 }
 ```
