@@ -13,9 +13,10 @@
   in
   {
 
-    ciNix = {
-      recurseIntoFlake = flake-compat-ci.lib.recurseIntoFlake self;
-    };
+    ciNix = flake-compat-ci.lib.recurseIntoFlakeWith { flake = self; systems = ["x86_64-linux"]; };
+
+    # This would error out if systems is unset.
+    checks."unavailable-linux".bovine = throw "unavailable-linux is a pretend `system` that does not actually exist. While it is allowed to be in the flake, it does not actually exist. This error should not be encountered on CI: unavailable-linux is a fake example of a best-effort system. Basically unsupported, but still available.";
 
     checks."x86_64-linux".bovine = nixpkgs.legacyPackages."x86_64-linux".cowsay;
 
@@ -41,6 +42,18 @@
 
     nixosConfigurations.joes-desktop = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
+      modules = [
+        {
+          fileSystems."/".device = "x";
+          boot.loader.grub.enable = false;
+        }
+      ];
+    };
+
+    # Won't be adding alpha to the build farm anytime soon, so we'll find out
+    # if it breaks (in the form of a job that can't complete)
+    nixosConfigurations.joes-experiment = nixpkgs.lib.nixosSystem {
+      system = "alpha-linux";
       modules = [
         {
           fileSystems."/".device = "x";
