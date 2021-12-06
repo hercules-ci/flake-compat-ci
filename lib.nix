@@ -74,5 +74,8 @@ rec {
     // optionalAttrs (flake ? devShell) {
       devShell = traverse_ (s: s // { isShell = true; }) (selectSystems flake.devShell);
     }
+    // optionalAttrs (flake ? effects) {
+      effects = recurseIntoAttrs flake.effects;
+    }
     ;
 }
