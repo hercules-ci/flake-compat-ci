@@ -40,6 +40,9 @@
         nativeBuildInputs = [ pkgs.figlet pkgs.hello ];
       };
 
+    # Not actually an effect, but that doesn't matter for agent 0.8 traversal.
+    effects.launch = nixpkgs.legacyPackages."x86_64-linux".hello;
+
     nixosConfigurations.joes-desktop = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
