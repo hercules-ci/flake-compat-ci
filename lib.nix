@@ -44,6 +44,9 @@ rec {
     # Flakes have no concept of cross compilation, so this is a little awkward
     # if you do cross compile.
     systems ? null,
+
+    # Arguments to pass to the effects attribute, when it is a function.
+    effectsArgs ? {},
     }:
     let selectSystems = 
           if systems == null || builtins.typeOf systems == "list" then 
@@ -75,7 +78,10 @@ rec {
       devShell = traverse_ (s: s // { isShell = true; }) (selectSystems flake.devShell);
     }
     // optionalAttrs (flake ? effects) {
-      effects = recurseIntoAttrs flake.effects;
+      effects =
+        if builtins.isFunction flake.effects
+        then recurseIntoAttrs (flake.effects effectsArgs)
+        else recurseIntoAttrs flake.effects;
     }
     ;
 }
