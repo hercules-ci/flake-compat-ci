@@ -29,6 +29,11 @@
       program = nixpkgs.legacyPackages."x86_64-linux".hello;
     };
 
+    apps."x86_64-linux".hello-by-string = {
+      type = "app";
+      program = "${nixpkgs.legacyPackages."x86_64-linux".hello}/bin/hello";
+    };
+
     defaultApp."x86_64-linux" = {
       type = "app";
       program = nixpkgs.legacyPackages."x86_64-linux".hello;
