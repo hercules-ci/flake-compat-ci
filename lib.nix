@@ -21,9 +21,39 @@ let
   checkApp = app:
     if app.type != "app"
     then throw "Nix flake app type must be \"app\"."
-    else recurseIntoAttrs {
-      inherit (app) program;
-    };
+    else if builtins.typeOf app.program == "string"
+    then
+      recurseIntoAttrs {
+        inherit (app) program;
+        programFromString = validateProgramFromStringContext app.program;
+      }
+    else
+      recurseIntoAttrs {
+        inherit (app) program;
+      };
+
+  validateProgramFromStringContext = s:
+    let ctx = builtins.getContext s;
+        drvs = builtins.attrNames ctx;
+        drvPath =
+          if drvs == []
+          then throw "The provided program string does not have a package in its context. Please set the app's program attribute to a package with `meta.mainProgram` or to a string of the form \"\${pkg}/bin/command\", where `pkg` is a package."
+          else if builtins.length drvs != 1
+          then throw "The provided program string has multiple packages in its context. Please set the app's program attribute to a single package with `meta.mainProgram` or to a string of the form \"\${pkg}/bin/command\", where `pkg` is a single package."
+          else builtins.head drvs;
+        basename = baseNameOf drvPath;
+        hashLength = 33;
+        l = builtins.stringLength basename;
+    in
+      {
+        name = builtins.substring hashLength (l - hashLength - 4) basename;
+        type = "derivation";
+        drvPath = drvPath;
+        # Not necessary? Subject to change?
+        # outputs = ctx.${drvPath};
+      };
+
+
   getNixOS = sys: sys.config.system.build.toplevel // { inherit (sys) config; };
   maybeGetNixOS = systems: 
     if systems == null
