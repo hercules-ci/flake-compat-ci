@@ -1,7 +1,12 @@
 
 ### `flake-compat-ci`
 
-This is a stop-gap solution for flakes CI with stable Nix 2.3 and stable Hercules CI.
+This was a stop-gap solution for flakes CI with stable Nix 2.3 and stable Hercules CI before it supported flakes natively.
+An up to date hercules-ci-agent is enough to evaluate flakes, and you can make use of the [`herculesCI`](https://docs.hercules-ci.com/hercules-ci-agent/evaluation) flake output attribute in order to customize the default behavior.
+
+Consider switching to the [`hercules-ci-effects`](https://flake.parts/options/hercules-ci-effects) flake-parts module, which adds more useful functionality using the module system. Flake-parts lets you integrate many other useful modules as well.
+
+<details><summary>Old readme</summary>
 
 It provides the `lib.recurseIntoFlake` function, which tells nix-build and Hercules CI
 which attributes to traverse for a given flake.
@@ -56,3 +61,5 @@ import flake-compat { src = ./.; }
 ```nix
 (import ./flake-compat.nix).defaultNix.ciNix
 ```
+
+</details>
